@@ -66,3 +66,5 @@ dist
 
 .env.development
 .env.production
+
+src/static/sw.js
