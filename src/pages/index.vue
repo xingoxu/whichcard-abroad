@@ -1,0 +1,522 @@
+<template>
+  <div>
+    <section
+      class="hero columns is-centered is-multiline is-primary"
+      style="margin-bottom: -0.75rem"
+    >
+      <div
+        class="column is-three-fifths-fullhd is-four-fifths-desktop"
+      >
+        <div class="hero-body">
+          <div class="container">
+            <h1 class="title">
+              出国该刷哪张卡
+            </h1>
+            <h2 class="subtitle">
+              Hero subtitle
+            </h2>
+          </div>
+        </div>
+      </div>
+    </section>
+    <div
+      class="columns is-centered is-multiline main"
+    >
+      <div
+        class="column is-three-fifths-fullhd is-four-fifths-desktop"
+      >
+        <Form
+          ref="form"
+          :disabled="currencyLoading"
+        ></Form>
+
+        <div
+          class="b-table sticky-header-table"
+          :class="{
+            'is-loading': currencyLoading
+          }"
+        >
+          <div
+            class="table-wrapper has-mobile-cards"
+          >
+            <table
+              class="table is-hoverable"
+            >
+              <thead>
+                <tr>
+                  <th
+                    v-for="(label,
+                    index) in [
+                      '#',
+                      'Card Name',
+                      'Card Network BrandCurrency',
+                      'Markup Fee Rate',
+                      'Pay Amount',
+                      'Rewards Rate',
+                      'Rewards',
+                      'Pay Amount with Rewards'
+                    ]"
+                    :key="index"
+                  >
+                    <div
+                      class="th-wrap"
+                      :class="{
+                        'is-numeric':
+                          index === 0
+                      }"
+                    >
+                      {{ label }}
+                    </div>
+                  </th>
+                  <td>
+                    <div class="th-wrap">
+                      <b-button
+                        rounded
+                        outlined
+                        type="is-primary"
+                        icon-right="add-outline"
+                        @click="addCard"
+                      />
+                    </div>
+                  </td>
+                </tr>
+              </thead>
+              <transition-group
+                tag="tbody"
+                name="flip-list"
+              >
+                <tr
+                  v-for="(row,
+                  index) in table"
+                  :key="row.card.id"
+                >
+                  <td
+                    class="has-text-right"
+                    data-label="#"
+                  >
+                    <span
+                      :class="{
+                        isSame:
+                          index > 0 &&
+                          table[index - 1]
+                            .index ===
+                            row.index
+                      }"
+                    >
+                      {{ row.index + 1 }}
+                    </span>
+                  </td>
+                  <cell-edit
+                    label="Card Name"
+                    v-model="row.card.name"
+                  />
+                  <card-brand-edit
+                    label="Card Network BrandCurrency"
+                    v-model="row.card.brand"
+                  >
+                    <span>
+                      <span
+                        style="vertical-align: middle"
+                      >
+                        {{
+                          currency[
+                            row.card.brand
+                          ]
+                        }}
+                      </span>
+                      <b-tooltip
+                        v-if="
+                          row.card.brand ===
+                            'ae'
+                        "
+                        label="American Express 没有公布汇率"
+                        animated
+                        style="vertical-align: middle"
+                      >
+                        <ion-icon
+                          name="information-circle-outline"
+                        ></ion-icon>
+                      </b-tooltip>
+                    </span>
+                  </card-brand-edit>
+                  <cell-edit
+                    label="Markup Fee Rate"
+                    is-number
+                    v-model="
+                      row.card.markupFee
+                    "
+                  >
+                    <span slot="afterInput">
+                      %
+                    </span>
+                  </cell-edit>
+                  <td
+                    data-label="Pay Amount"
+                  >
+                    <span
+                      style="white-space:nowrap;"
+                    >
+                      <span>{{
+                        row.calc
+                      }}</span>
+                      <span class="supp_text"
+                        >JPY</span
+                      >
+                    </span>
+                  </td>
+                  <reward-edit
+                    :card="row.card"
+                  />
+                  <td data-label="Rewards">
+                    -{{
+                      (row.reward > 0 &&
+                        row.reward) ||
+                        ''
+                    }}
+                  </td>
+                  <td
+                    data-label="Pay Amount with Rewards"
+                  >
+                    <span
+                      style="white-space:nowrap"
+                    >
+                      <span>{{
+                        row.calcWithReward
+                      }}</span>
+                      <span class="supp_text"
+                        >JPY</span
+                      >
+                    </span>
+                  </td>
+                  <td>
+                    <b-button
+                      class="hover-show"
+                      type="is-danger"
+                      @click="
+                        removeCard(row.card)
+                      "
+                      outlined
+                      rounded
+                      icon-right="trash-outline"
+                    />
+                  </td>
+                </tr>
+              </transition-group>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script lang="ts">
+  import Vue from 'vue';
+  import { Route } from 'vue-router';
+  import rewardEdit from '@/components/rewardEdit.vue';
+  import cellEdit from '@/components/cellEdit.vue';
+  import cardBrandEdit from '@/components/cardBrandEdit.vue';
+  import Form, {
+    getDefaultForm,
+    serializeForm
+  } from '@/components/Form.vue';
+  import { response } from '@/api/functions/currency';
+  import {
+    cards,
+    Card,
+    ShowCard,
+    BrandCurrency,
+    rewardWithoutReward
+  } from '@/constants/cards';
+  import { Context } from '@nuxt/types';
+  import { showCardSort } from '@/utils/cardSortRule';
+
+  const setAECurrency = (
+    currencyData: Partial<BrandCurrency>
+  ): Partial<BrandCurrency> => {
+    const sum = Object.values(
+      currencyData
+    ).reduce((prev, value) => {
+      if (value === undefined) return prev;
+      else
+        return (
+          prev + Number.parseFloat(value)
+        );
+    }, 0);
+    return {
+      ...currencyData,
+      ae:
+        (
+          sum /
+          Object.values(currencyData).filter(
+            x => !!x
+          ).length
+        ).toString() ||
+        'Card network currency is not available.'
+    };
+  };
+
+  const generateTableData = (
+    currencyData: Partial<BrandCurrency>,
+    query: Route['query'],
+    cards: Card[]
+  ): ShowCard[] => {
+    const amount = getDefaultForm(query)
+      .amount;
+
+    const _cards = cards
+      .map(
+        (card): ShowCard => {
+          const errorMessage =
+            'Card network currency is not available.';
+          const currency =
+            currencyData[card.brand];
+
+          let calc = currency
+            ? Math.round(
+                Number.parseFloat(currency) *
+                  amount *
+                  (card.markupFee / 100 + 1)
+              )
+            : NaN;
+
+          const reward =
+            (card.rewardCalc &&
+              !Number.isNaN(calc) &&
+              card.rewardCalc(calc)) ||
+            0;
+
+          return {
+            card,
+            calc: !Number.isNaN(calc)
+              ? calc
+              : errorMessage,
+            reward,
+            calcWithReward: !Number.isNaN(
+              calc
+            )
+              ? calc - reward
+              : errorMessage,
+            index: 0
+          };
+        }
+      )
+      .sort(showCardSort);
+    _cards.forEach((value, index) => {
+      if (
+        index > 0 &&
+        value.calcWithReward ===
+          _cards[index - 1].calcWithReward
+      ) {
+        value.index =
+          _cards[index - 1].index;
+      } else {
+        value.index = index;
+      }
+    });
+
+    return _cards;
+  };
+
+  const getData = async ({
+    context,
+    axios,
+    query
+  }: {
+    context?: Context;
+    axios: Context['$axios'];
+    query: Route['query'];
+  }) => {
+    let currencyData: Partial<BrandCurrency>;
+    try {
+      if (process.server && context) {
+        currencyData = await response(
+          context.req
+        );
+      } else {
+        const data = await axios.$get(
+          '/currency',
+          {
+            params: serializeForm(
+              getDefaultForm(query)
+            )
+          }
+        );
+
+        currencyData = data;
+      }
+    } catch (e) {
+      if (context) {
+        context.error(e);
+        return;
+      } else throw e;
+    }
+
+    const currency = setAECurrency(
+      currencyData
+    );
+
+    return {
+      currency
+    };
+  };
+
+  export default Vue.extend({
+    async asyncData(context) {
+      return getData({
+        context,
+        axios: context.$axios,
+        query: context.query
+      });
+    },
+    methods: {
+      fixHeaderNotClickableBug(
+        event: Event
+      ) {
+        let target = event.target as
+          | HTMLElement
+          | null
+          | undefined;
+        while (
+          target &&
+          target.tagName !== 'THEAD'
+        ) {
+          target = target.parentElement;
+          if (
+            !target ||
+            target.tagName === 'TABLE'
+          )
+            return;
+        }
+        target && target.click();
+      },
+      removeCard(card: Card): void {
+        this.cards.splice(
+          this.cards.indexOf(card),
+          1
+        );
+      },
+      addCard(): void {
+        this.cards.push({
+          id: this.cards.length,
+          name: 'Your Custom Payment',
+          brand: 'visa',
+          markupFee: 0,
+          rewardCalc: rewardWithoutReward,
+          rewardRate: 100
+        });
+      }
+    },
+    data() {
+      return {
+        currency: {} as Partial<
+          BrandCurrency
+        >,
+        cards: cards,
+        currencyLoading: false
+      };
+    },
+    computed: {
+      table(): ShowCard[] {
+        return generateTableData(
+          this.currency,
+          this.$route.query,
+          this.cards
+        );
+      }
+    },
+    watch: {
+      $route(
+        _newValue: Route,
+        _oldValue: Route
+      ) {
+        if (
+          _newValue.query['ccy'] ===
+            _oldValue.query['ccy'] &&
+          _newValue.query['date'] ===
+            _oldValue.query['date']
+        )
+          return;
+        this.currencyLoading = true;
+        getData({
+          axios: this.$axios,
+          query: _newValue.query
+        })
+          .then(data => {
+            Object.keys(data!).forEach(
+              _key => {
+                let key = _key as keyof Exclude<
+                  typeof data,
+                  undefined
+                >;
+                let v = data![key];
+                (this[key] as typeof v) = v;
+              }
+            );
+          })
+          .catch(err => {
+            this.$buefy.toast.open({
+              duration: 5000,
+              message:
+                err.message ||
+                `Something's going wrong. Try to refresh page or try it again later.`,
+              position: 'is-bottom',
+              type: 'is-danger'
+            });
+          })
+          .finally(() => {
+            this.currencyLoading = false;
+          });
+      }
+    },
+    components: {
+      Form,
+      rewardEdit,
+      cellEdit,
+      cardBrandEdit
+    }
+  });
+</script>
+<style lang="scss" scoped>
+  .hero {
+    flex-direction: row;
+    margin-right: 0;
+  }
+  .main {
+    margin: 3rem 0;
+  }
+  @media screen and (min-width: 1024px) {
+    .hero-body {
+      padding-left: 0;
+      padding-right: 0;
+    }
+  }
+  td .isSame {
+    color: darkgray;
+  }
+  .supp_text {
+    font-size: smaller;
+  }
+  .hover-show {
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  tr:hover {
+    .hover-show {
+      opacity: 1;
+    }
+  }
+</style>
+
+<style>
+  .button.is-text {
+    text-decoration: none;
+  }
+  .sticky-header-table thead {
+    position: sticky;
+    top: 0;
+  }
+  .flip-list-move {
+    transition: transform 0.5s ease;
+  }
+</style>

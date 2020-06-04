@@ -1,0 +1,59 @@
+@import "./variables.scss";
+
+// Import Bulma and Buefy styles
+@import "~bulma";
+@import "~buefy/src/scss/buefy";
+
+body {
+  font-size: 13px;
+}
+
+.spinner {
+  width: 60px;
+  height: 60px;
+  margin: 100px auto;
+  background-color: $primary;
+  border: 0;
+  border-radius: 100%;  
+  animation: sk-scaleout 1.0s infinite ease-in-out;
+}
+
+.b-table.is-loading {
+  opacity: 1;
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    top: 0;
+    background: #FFF;
+    opacity: 0.5;
+  }
+}
+
+
+.b-table.is-loading::after {
+  @extend .spinner;
+}
+
+
+
+@-webkit-keyframes sk-scaleout {
+  0% { -webkit-transform: scale(0) }
+  100% {
+    -webkit-transform: scale(1.0);
+    opacity: 0;
+  }
+}
+
+@keyframes sk-scaleout {
+  0% { 
+    -webkit-transform: scale(0);
+    transform: scale(0);
+  } 100% {
+    -webkit-transform: scale(1.0);
+    transform: scale(1.0);
+    opacity: 0;
+  }
+}
