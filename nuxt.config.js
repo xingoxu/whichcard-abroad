@@ -53,7 +53,8 @@ module.exports = {
     {
       src: '@/plugins/ion-icon.tsx',
       ssr: true
-    }
+    },
+    '@/plugins/getData.server.ts'
   ],
   srcDir: './src',
   serverMiddleware: [

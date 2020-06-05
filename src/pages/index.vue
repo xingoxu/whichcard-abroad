@@ -220,7 +220,6 @@
     getDefaultForm,
     serializeForm
   } from '@/components/Form.vue';
-  import { response } from '@/api/functions/currency';
   import {
     cards,
     Card,
@@ -330,9 +329,7 @@
     let currencyData: Partial<BrandCurrency>;
     try {
       if (process.server && context) {
-        currencyData = await response(
-          context.req
-        );
+        currencyData = await Vue.prototype.$getCurrency(context);
       } else {
         const data = await axios.$get(
           '/currency',
