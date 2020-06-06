@@ -10,10 +10,10 @@
         <div class="hero-body">
           <div class="container">
             <h1 class="title">
-              出国该刷哪张卡
+              海外どのカード？
             </h1>
             <h2 class="subtitle">
-              Hero subtitle
+              手数料+ポイント横断比較
             </h2>
           </div>
         </div>
@@ -68,7 +68,7 @@
                       {{ label }}
                     </div>
                   </th>
-                  <td>
+                  <th>
                     <div class="th-wrap">
                       <b-button
                         rounded
@@ -78,11 +78,12 @@
                         @click="addCard"
                       />
                     </div>
-                  </td>
+                  </th>
                 </tr>
               </thead>
               <transition-group
                 tag="tbody"
+                class="flip-list-wrapper"
                 name="flip-list"
               >
                 <tr
@@ -129,7 +130,7 @@
                           row.card.brand ===
                             'ae'
                         "
-                        label="American Express 没有公布汇率"
+                        label="American Express の為替は公表してない*"
                         animated
                         style="vertical-align: middle"
                       >
@@ -168,11 +169,13 @@
                     :card="row.card"
                   />
                   <td data-label="Rewards">
-                    -{{
-                      (row.reward > 0 &&
-                        row.reward) ||
-                        ''
-                    }}
+                    <span
+                      >-{{
+                        (row.reward > 0 &&
+                          row.reward) ||
+                          ''
+                      }}</span
+                    >
                   </td>
                   <td
                     data-label="Pay Amount with Rewards"
@@ -199,6 +202,20 @@
                       rounded
                       icon-right="trash-outline"
                     />
+                  </td>
+                </tr>
+                <tr key="extra">
+                  <td colspan="9">
+                    <span class="t-1_comment"
+                      >*</span>
+                    Mastercard の当日の基準レートは公表されておらず、直近日の基準レートで代用されてます
+                    <br>
+                    American Express の基準レートは公表されておらず、全ブランドの基準レートの平均値を使って計算してます。
+                    <br>
+                    <br>
+                    外貨から日本円へは後日売上データが到着された時点で換算されますので、実際のお支払い金額ではありません。
+                    <br>
+                    この表では当日の各ブランドの最新の基準レートを使用して推定され、一般に実際の外国為替購入の結果には多少の誤差がありますが、おおよそ各カードの違いを反映しています。
                   </td>
                 </tr>
               </transition-group>
@@ -329,7 +346,9 @@
     let currencyData: Partial<BrandCurrency>;
     try {
       if (process.server && context) {
-        currencyData = await Vue.prototype.$getCurrency(context);
+        currencyData = await Vue.prototype.$getCurrency(
+          context
+        );
       } else {
         const data = await axios.$get(
           '/currency',
@@ -509,11 +528,36 @@
   .button.is-text {
     text-decoration: none;
   }
-  .sticky-header-table thead {
+  .sticky-header-table thead th {
     position: sticky;
     top: 0;
+    z-index: 10;
+    background: #fff;
   }
-  .flip-list-move {
-    transition: transform 0.5s ease;
+  .flip-list-wrapper > tr {
+    transition: all 0.5s ease;
+  }
+  .flip-list-enter,
+  .flip-list-leave-to {
+    opacity: 0;
+  }
+  .flip-list-leave-active td {
+    transition: all 0.5s ease;
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+  .flip-list-leave-active td > * {
+    position: absolute;
+  }
+  @media screen and (max-width: 1023px) {
+    .table-wrapper {
+      overflow: unset;
+    }
+  }
+  .b-table .table th .th-wrap .icon {
+    margin-left: 0;
+  }
+  .t-1_comment {
+    color: red;
   }
 </style>

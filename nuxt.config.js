@@ -3,7 +3,7 @@ const cookieParser = require('cookie-parser');
 
 module.exports = {
   head: {
-    title: 'nuxt-serverless',
+    title: 'クレジットカード海外使用横断比較',
     meta: [
       { chatset: 'utf-8' },
       {
