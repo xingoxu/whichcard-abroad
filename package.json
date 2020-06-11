@@ -9,12 +9,13 @@
   "scripts": {
     "dev": "nodemon --exec npm run _dev",
     "_dev": "webpack && node ./.nuxt/dist/server.js",
-    "build": "nuxt build && NODE_ENV=production webpack",
+    "build": "nuxt build && NODE_ENV=production STAGE=production webpack",
+    "build:dev": "NODE_ENV=development nuxt build && NODE_ENV=production STAGE=development webpack",
     "start": "npm run build && NODE_ENV=production node ./.nuxt/dist/server.js",
-    "deploy:dev": "NODE_ENV=development sls deploy --stage dev",
-    "deploy:stage": "NODE_ENV=production sls deploy --stage stage",
-    "deploy:prod": "NODE_ENV=production sls deploy --stage prod",
-    "undeploy:dev": "sls remove --stage dev",
+    "start:dev": "npm run build:dev && node ./.nuxt/dist/server.js",
+    "deploy:dev": "npm run build:dev && NODE_ENV=development sls deploy --stage dev",
+    "deploy:prod": "npm run build && NODE_ENV=production sls deploy --stage prod",
+    "undeploy:dev": "NODE_ENV=development sls remove --stage dev",
     "undeploy:stage": "NODE_ENV=production sls remove --stage stage",
     "undeploy:prod": "NODE_ENV=production sls remove --stage prod"
   },

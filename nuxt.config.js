@@ -39,9 +39,7 @@ module.exports = {
   },
   axios: {
     baseURL:
-      process.env.NODE_ENV === 'production'
-        ? 'https://whichcard-dev.xingoxu.com'
-        : 'http://localhost:3000'
+      '/'
   },
   vue: {
     config: {
