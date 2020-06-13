@@ -1,9 +1,10 @@
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
-
+console.log();
 module.exports = {
   head: {
-    title: 'クレジットカード海外使用横断比較',
+    title:
+      'クレジットカード海外使用横断比較',
     meta: [
       { chatset: 'utf-8' },
       {
@@ -28,8 +29,8 @@ module.exports = {
       {
         src:
           'https://unpkg.com/ionicons@5.0.0/dist/ionicons/ionicons.js',
-        nomodule: '',
-      },
+        nomodule: ''
+      }
       // {
       //   src:
       //     'https://unpkg.com/ionicons@5.0.0/dist/ionicons.js',
@@ -38,8 +39,7 @@ module.exports = {
     ]
   },
   axios: {
-    baseURL:
-      '/'
+    baseURL: '/'
   },
   vue: {
     config: {
@@ -64,6 +64,8 @@ module.exports = {
   ],
   build: {
     standalone: true,
+    extractCSS:
+      process.env.HOT_RELOAD !== 'true',
     loaders: {
       scss: {
         implementation: require('sass')

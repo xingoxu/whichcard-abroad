@@ -11,19 +11,20 @@
             tag="router-link"
             :to="{ path: '/' }"
           >
-            Home
+            <!-- Home -->
+            ホーム
           </b-navbar-item>
-          <b-navbar-dropdown label="Info">
-            <b-navbar-item
-              tag="router-link"
-              :to="{ path: '/about' }"
-            >
-              About
-            </b-navbar-item>
-            <b-navbar-item href="#">
-              Contact
-            </b-navbar-item>
-          </b-navbar-dropdown>
+          <b-navbar-item
+            tag="router-link"
+            :to="{ path: '/about' }"
+          >
+            <!-- About -->
+            <!-- Contact -->
+            説明 / お問合せ
+          </b-navbar-item>
+          <!-- <b-navbar-dropdown label="Info">
+
+          </b-navbar-dropdown> -->
         </template>
       </b-navbar>
     </div>

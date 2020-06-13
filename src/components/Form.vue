@@ -8,7 +8,7 @@
       >
         <b-field>
           <template slot="label"
-            >Currency</template
+            >通貨</template
           >
           <b-field>
             <b-input
@@ -86,7 +86,7 @@
       </div>
       <div class="column form-control is-one-third">
         <b-field
-          label="交易金额"
+          label="取引金額"
           class="has-numberinput"
         >
           <div
@@ -131,7 +131,7 @@
               <ion-icon
                 name="globe-outline"
               ></ion-icon>
-              <span>选择货币</span>
+              <span>通貨を選択</span>
             </p>
           </header>
           <section class="modal-card-body">
@@ -163,7 +163,7 @@
             <b-button
               @click="currencyModal = false"
             >
-              关闭
+              閉じる
             </b-button>
           </footer>
         </div>
@@ -319,7 +319,7 @@
     border-bottom-width: 2px;
   }
 </style>
-<style lang="scss" scoped>
+<style lang="scss">
   @use 'sass:color';
   @import '@/css/variables.scss';
 

@@ -1,8 +1,5 @@
 <template>
-  <td
-    data-label="Rewards Rate"
-    class="edit-cell"
-  >
+  <td :data-label="label" class="edit-cell">
     <div class="view" v-if="!editing">
       <span> {{ card.rewardRate }}% </span>
       <b-button
@@ -31,8 +28,10 @@
           <b-checkbox
             size="is-small"
             v-model="form.rewardWithReward"
-            >Reward With Reward</b-checkbox
           >
+            <!-- Reward With Reward -->
+            ポイントが更に還元される
+          </b-checkbox>
         </div>
       </div>
       <div
@@ -69,7 +68,7 @@
       card.rewardCalc === rewardWithReward
   });
   export default Vue.extend({
-    props: ['card'],
+    props: ['card', 'label'],
     data() {
       return {
         editing: false,
@@ -114,5 +113,10 @@
   .b-numberinput::v-deep
     input[type='number'] {
     text-align: initial;
+  }
+  @media screen and (max-width: 768px) {
+    .edit-cell .edit-button {
+      opacity: 1;
+    }
   }
 </style>

@@ -46,16 +46,7 @@
                 <tr>
                   <th
                     v-for="(label,
-                    index) in [
-                      '#',
-                      'Card Name',
-                      'Card Network BrandCurrency',
-                      'Markup Fee Rate',
-                      'Pay Amount',
-                      'Rewards Rate',
-                      'Rewards',
-                      'Pay Amount with Rewards'
-                    ]"
+                    index) in tableHeader"
                     :key="index"
                   >
                     <div
@@ -93,7 +84,9 @@
                 >
                   <td
                     class="has-text-right"
-                    data-label="#"
+                    :data-label="
+                      tableHeader[0]
+                    "
                   >
                     <span
                       :class="{
@@ -108,13 +101,20 @@
                     </span>
                   </td>
                   <cell-edit
-                    label="Card Name"
+                    :label="tableHeader[1]"
                     v-model="row.card.name"
                   />
                   <card-brand-edit
-                    label="Card Network BrandCurrency"
+                    :label="tableHeader[2]"
                     v-model="row.card.brand"
                   >
+                    <!-- <b-collapse
+                      :open="false"
+                      aria-id="currencyInfo"
+                      animation="slide"
+                    > -->
+                    <!-- slot="trigger"
+                        aria-controls="currencyInfo" -->
                     <span>
                       <span
                         style="vertical-align: middle"
@@ -125,27 +125,39 @@
                           ]
                         }}
                       </span>
-                      <!-- <button class="button block" @click="isActive = !isActive">Toggle</button>
-                      <b-message title="Default" :active.sync="isActive" aria-close-label="Close message">
-                          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce id fermentum quam. Proin sagittis, nibh id hendrerit imperdiet, elit sapien laoreet elit
-                      </b-message> -->
-                      <b-tooltip
+                      <span
                         v-if="
                           row.card.brand ===
-                            'ae'
+                            'ae' ||
+                            row.card
+                              .brand ===
+                              'mastercard'
                         "
-                        label="American Express の為替は公表してない*"
-                        animated
-                        style="vertical-align: middle"
+                        class="t-1_comment"
+                        >*</span
                       >
-                        <ion-icon
+                      <!-- <ion-icon
+                          style="vertical-align: middle"
                           name="information-circle-outline"
-                        ></ion-icon>
-                      </b-tooltip>
+                        ></ion-icon> -->
                     </span>
+                    <!-- <div
+                        class="notification"
+                      >
+                        <div class="content">
+                          <h3>
+                            Subtitle
+                          </h3>
+                          <p>
+                            American Express
+                            の為替は公表してない*
+                          </p>
+                        </div>
+                      </div>
+                    </b-collapse> -->
                   </card-brand-edit>
                   <cell-edit
-                    label="Markup Fee Rate"
+                    :label="tableHeader[3]"
                     is-number
                     v-model="
                       row.card.markupFee
@@ -156,7 +168,9 @@
                     </span>
                   </cell-edit>
                   <td
-                    data-label="Pay Amount"
+                    :data-label="
+                      tableHeader[4]
+                    "
                   >
                     <span
                       style="white-space:nowrap;"
@@ -170,9 +184,14 @@
                     </span>
                   </td>
                   <reward-edit
+                    :label="tableHeader[5]"
                     :card="row.card"
                   />
-                  <td data-label="Rewards">
+                  <td
+                    :data-label="
+                      tableHeader[6]
+                    "
+                  >
                     <span
                       >-{{
                         (row.reward > 0 &&
@@ -182,7 +201,9 @@
                     >
                   </td>
                   <td
-                    data-label="Pay Amount with Rewards"
+                    :data-label="
+                      tableHeader[7]
+                    "
                   >
                     <span
                       style="white-space:nowrap"
@@ -211,14 +232,17 @@
                 <tr key="extra">
                   <td colspan="9">
                     <span class="t-1_comment"
-                      >*</span>
-                    Mastercard の当日の基準レートは公表されておらず、直近日の基準レートで代用されてます
-                    <br>
-                    American Express の基準レートは公表されておらず、全ブランドの基準レートの平均値を使って計算してます。
-                    <br>
-                    <br>
+                      >*</span
+                    >
+                    Mastercard
+                    の当日の基準レートは公表されておらず、直近日の基準レートで代用されてます
+                    <br />
+                    American Express
+                    の基準レートは公表されておらず、全ブランドの基準レートの平均値を使って計算してます。
+                    <br />
+                    <br />
                     外貨から日本円へは後日売上データが到着された時点で換算されますので、実際のお支払い金額ではありません。
-                    <br>
+                    <br />
                     この表では当日の各ブランドの最新の基準レートを使用して推定され、一般に実際の外国為替購入の結果には多少の誤差がありますが、おおよそ各カードの違いを反映しています。
                   </td>
                 </tr>
@@ -419,7 +443,9 @@
       addCard(): void {
         this.cards.push({
           id: this.cards.length,
-          name: 'Your Custom Payment',
+          // 'Your Custom Payment'
+          name: `カード ${this.cards.length +
+            1}`,
           brand: 'visa',
           markupFee: 0,
           rewardCalc: rewardWithoutReward,
@@ -443,6 +469,28 @@
           this.$route.query,
           this.cards
         );
+      },
+      tableHeader() {
+        return [
+          '#',
+          'カード名',
+          'カードブランド為替',
+          '手数料',
+          '支払金額',
+          '還元率',
+          '還元額',
+          '実質'
+        ];
+        // return [
+        //   '#',
+        //   'Card Name',
+        //   'Card Network BrandCurrency',
+        //   'Markup Fee Rate',
+        //   'Pay Amount',
+        //   'Rewards Rate',
+        //   'Rewards',
+        //   'Pay Amount with Rewards'
+        // ];
       }
     },
     watch: {
@@ -522,6 +570,11 @@
     transition: opacity 0.3s;
   }
   tr:hover {
+    .hover-show {
+      opacity: 1;
+    }
+  }
+  @media screen and (max-width: 768px) {
     .hover-show {
       opacity: 1;
     }

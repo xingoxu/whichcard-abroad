@@ -107,4 +107,9 @@
     input[type='number'] {
     text-align: initial;
   }
+  @media screen and (max-width: 768px) {
+    .edit-cell .edit-button {
+      opacity: 1;
+    }
+  }
 </style>
