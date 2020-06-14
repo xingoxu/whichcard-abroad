@@ -1,16 +1,27 @@
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
-console.log();
+
+const title = `クレジットカード海外使用横断比較`;
+const description = `クレジットカード手数料とポイント合わせて最安値を比較するランキングサイト`;
+
 module.exports = {
   head: {
-    title:
-      'クレジットカード海外使用横断比較',
+    title: title,
     meta: [
       { chatset: 'utf-8' },
       {
         name: 'viewport',
         content:
           'width=device-width, initial-scale=1'
+      },
+      {
+        name: 'description',
+        content: description
+      },
+      {
+        name: 'keywords',
+        content:
+          'クレジットカード,ポイント,ランキング,比較,海外,海外利用,海外旅行'
       }
     ],
     link: [
@@ -37,6 +48,22 @@ module.exports = {
       //   body: true
       // }
     ]
+  },
+  pwa: {
+    meta: {
+      name: title,
+      description: description,
+      lang: 'ja',
+      ogHost: 'https://whichcard.xingoxu.com'
+    },
+    manifest: {
+      name: title,
+      description: description,
+      lang: 'ja',
+    },
+    icon: {
+      iconSrc: './static/favicon.png'
+    }
   },
   axios: {
     baseURL: '/'
@@ -85,6 +112,10 @@ module.exports = {
       {
         filename: `./.env.${process.env.NODE_ENV}`
       }
+    ],
+    [
+      '@nuxtjs/google-analytics',
+      { id: 'UA-169360316-1' }
     ]
   ],
   /*

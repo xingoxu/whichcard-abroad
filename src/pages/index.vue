@@ -1,6 +1,7 @@
 <template>
   <div>
     <section
+      ref="heroSection"
       class="hero columns is-centered is-multiline is-primary"
       style="margin-bottom: -0.75rem"
     >
@@ -20,6 +21,7 @@
       </div>
     </section>
     <div
+      ref="mainSection"
       class="columns is-centered is-multiline main"
     >
       <div

@@ -31,7 +31,10 @@
           </b-field>
         </b-field>
       </div>
-      <div class="column form-control" v-if="false">
+      <div
+        class="column form-control"
+        v-if="false"
+      >
         <b-field label="Date">
           <b-field>
             <b-datepicker
@@ -84,7 +87,9 @@
           </b-field>
         </b-field>
       </div>
-      <div class="column form-control is-one-third">
+      <div
+        class="column form-control is-one-third"
+      >
         <b-field
           label="取引金額"
           class="has-numberinput"
@@ -145,6 +150,10 @@
                 <b-button
                   expanded
                   class="currency-button"
+                  :class="{
+                    'is-selected':
+                      form.ccy === currency
+                  }"
                   type="is-primary"
                   outlined
                   @click="
@@ -285,7 +294,9 @@
     },
     watch: {
       $route() {
-        this.form = getDefaultForm(this.$route.query);
+        this.form = getDefaultForm(
+          this.$route.query
+        );
       }
     }
   });
@@ -319,7 +330,7 @@
     border-bottom-width: 2px;
   }
 </style>
-<style lang="scss">
+<style lang="scss" scoped>
   @use 'sass:color';
   @import '@/css/variables.scss';
 
@@ -354,7 +365,8 @@
     }
   }
 
-  .button.currency-button:hover {
+  .button.currency-button:hover,
+  .button.currency-button.is-selected {
     color: $primary;
     background: transparent;
     border-color: color.change(
