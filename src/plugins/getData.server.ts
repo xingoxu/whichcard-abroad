@@ -2,8 +2,14 @@ import Vue from 'vue';
 import { response } from '@/api/functions/currency';
 import { Context } from '@nuxt/types';
 
-Vue.prototype.$getCurrency = (context: Context) => {
-  return response(
-    context.req
-  );
+const handler = (context: Context) => {
+  return response(context.req);
+};
+
+declare module 'vue/types/vue' {
+  interface VueConstructor {
+    $serverGetCurrency: typeof handler;
+  }
 }
+
+Vue.$serverGetCurrency = handler;

@@ -376,7 +376,7 @@
     let currencyData: Partial<BrandCurrency>;
     try {
       if (process.server && context) {
-        currencyData = await Vue.prototype.$getCurrency(
+        currencyData = await Vue.$serverGetCurrency(
           context
         );
       } else {
