@@ -60,6 +60,23 @@
                 </p>
               </client-only>
             </li>
+            <li>
+              <h2 class="subtitle">
+                うまい棒食べたい
+              </h2>
+              <p>
+                <b-button
+                  type="is-primary"
+                  inverted
+                  outlined
+                  icon-left="gift-outline"
+                  tag="a"
+                  target="_blank"
+                  href="https://www.paypal.me/xingoxu/21JPY"
+                  >買ってあげます</b-button
+                >
+              </p>
+            </li>
           </ul>
         </div>
       </div>
