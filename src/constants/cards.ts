@@ -113,7 +113,7 @@ export const cards: Card[] = [
     rewardCalc: rewardWithReward
   },
   {
-    name: 'セゾンカード（America Express）',
+    name: 'セゾンカード（American Express）',
     brand: 'ae',
     markupFee: 2,
     rewardRate: 1,
