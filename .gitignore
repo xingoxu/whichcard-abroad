@@ -55,7 +55,9 @@ typings/
 .yarn-integrity
 
 # dotenv environment variables file
-.env
+# .env
+# .env.development
+# .env.production
 
 .nuxt
 dist
@@ -63,8 +65,5 @@ dist
 .DS_Store
 .serverless
 .vscode
-
-.env.development
-.env.production
 
 src/static/sw.js
